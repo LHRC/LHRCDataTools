@@ -46,14 +46,50 @@ getLocationsDF <- function(user, password){
 
 }
 
-getTransactionsBetween <- function(locationID, startDate, endDate, user, password) {
+getTransactionsForLocationBetweenDF <- function(locationID, startDate, endDate, user, password) {
   #"https://odata.restaurant365.net/api/v2/views/Transaction?$filter=date%20ge%202024-02-26T00:00:00Z%20and%20date%20lt%202024-02-29T00:00:00Z"
   txEndpoint <- stringr::str_glue("https://odata.restaurant365.net/api/v2/views/Transaction?$filter=locationId%20eq%20{locationID}%20and%20date%20ge%20{startDate}T00:00:00Z%20and%20date%20lt%20{endDate}T23:59:59Z")
   print(txEndpoint)
   txDF <- getDFFromEndpoint(txEndpoint)
   #txDF <- txDF %>% filter (type != "Budget")
   detailDF <- getTransactionDetailsDF(txDF %>% select(transactionId))
-
   combinedDF <- left_join(detailDF, txDF, by = "transactionId")
   combinedDF
+}
+
+getTransactionDetailsDF <- function(txIDs) {
+  for (row in 1:nrow(txIDs)) {
+    result <- getTransactionDetails(txIDs[row, "transactionId"])
+    if (row == 1) {
+      DF <- result
+    } else {
+      if (! is.null(result) ) {
+        DF <- dplyr::bind_rows(DF, result)
+      }
+    }
+  }
+  DF
+}
+
+getTransactionDetailsDF <- function(txID) {
+  txDetEndpoint <- stringr::str_glue("https://odata.restaurant365.net/api/v2/views/TransactionDetail?$filter=transactionId%20eq%20({txID})")
+  print(txDetEndpoint)
+  DF <- getDFFromEndpoint(txDetEndpoint)
+  if (nrow(DF) > 0) {
+    DF <- DF %>%
+      group_by(transactionId, glAccountId) %>%
+      summarise(credit = sum(credit), debit = sum(debit), .groups = "drop")
+    combinedDF <- left_join(DF, GLAccounts %>% select(glAccountId, name, glAccountNumber, glType), by = "glAccountId")
+    combinedDF
+  } else {
+    NULL
+  }
+}
+
+getLocationIdDF <- function(user, password){
+
+}
+
+getLocatonIdByName <- function(name, user, password){
+
 }
