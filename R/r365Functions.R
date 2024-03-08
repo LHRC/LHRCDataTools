@@ -2,6 +2,7 @@ brgId <- "2cd5cddd-8b98-4207-8ade-e9e160d761c1"
 bnsId <- "32a6eae8-7a87-40f1-aa06-c71633bb18e1"
 okcId <- "f0808e2c-880a-426d-bb03-2db7a2bdc78e"
 
+#' @export
 getDFFromEndpoint <- function(endpointURL, user, password) {
   endpointURL <- gsub(" ", "%20", endpointURL)
   endpointURL <- gsub("'", "%27", endpointURL)
@@ -35,6 +36,7 @@ getDFFromEndpoint <- function(endpointURL, user, password) {
   DF %>% select(-c(`..JSON`))
 }
 
+#' @export
 getGLAccountsDF <- function(user, password) {
   GLAccountsEndpoint <- "https://odata.restaurant365.net/api/v2/views/GlAccount"
   DF <- getDFFromEndpoint(GLAccountsEndpoint) %>%
@@ -42,6 +44,7 @@ getGLAccountsDF <- function(user, password) {
   DF
 }
 
+#' @export
 getLocationsDF <- function(user, password){
 
 }
@@ -58,6 +61,7 @@ getTransactionsForLocationBetweenDF <- function(locationID, startDate, endDate, 
   combinedDF
 }
 
+#' @export
 getTransactionDetailsDF <- function(txIDs) {
   for (row in 1:nrow(txIDs)) {
     result <- getTransactionDetails(txIDs[row, "transactionId"])
@@ -71,7 +75,7 @@ getTransactionDetailsDF <- function(txIDs) {
   }
   DF
 }
-
+#' @export
 getTransactionDetailsDF <- function(txID) {
   txDetEndpoint <- stringr::str_glue("https://odata.restaurant365.net/api/v2/views/TransactionDetail?$filter=transactionId%20eq%20({txID})")
   print(txDetEndpoint)
