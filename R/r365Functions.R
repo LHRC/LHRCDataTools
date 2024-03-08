@@ -15,7 +15,7 @@ getDFFromEndpoint <- function(endpointURL, user, password) {
   count <- respJSON$`@odata.count`
   # print(count)
   DF <- respJSON$value %>%
-    spread_all()
+    tidyjson::spread_all()
   pageSize <- nrow(DF)
 
   i <- 1
@@ -23,17 +23,17 @@ getDFFromEndpoint <- function(endpointURL, user, password) {
     #print(paste("loop", i))
     epurl <- paste(endpointURL, "&$skip=", i * pageSize, sep = "")
     # print(epurl)
-    req <- request(epurl) |> req_auth_basic(user, pw)
-    resp <- req_perform(req)
+    req <- request(epurl) |> httr2::req_auth_basic(user, pw)
+    resp <- httr2::req_perform(req)
     respJSON <- resp |> httr2::resp_body_json()
     df <- respJSON$value %>%
-      spread_all()
-    DF <- bind_rows(DF, df)
+      tidyjson::spread_all()
+    DF <- dplyr::bind_rows(DF, df)
     i <- i + 1
   }
   #attr(DF, "class") <- attr(DF, "class")[-1]
   DF <- as.data.frame(DF)
-  DF %>% select(-c(`..JSON`))
+  DF %>% dplyr::select(-c(`..JSON`))
 }
 
 #' @export
@@ -57,7 +57,7 @@ getTransactionsForLocationBetweenDF <- function(locationID, startDate, endDate, 
   txDF <- getDFFromEndpoint(txEndpoint)
   #txDF <- txDF %>% filter (type != "Budget")
   detailDF <- getTransactionDetailsDF(txDF %>% select(transactionId))
-  combinedDF <- left_join(detailDF, txDF, by = "transactionId")
+  combinedDF <- dplyr::left_join(detailDF, txDF, by = "transactionId")
   combinedDF
 }
 
