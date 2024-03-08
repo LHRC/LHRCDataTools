@@ -9,8 +9,8 @@ getDFFromEndpoint <- function(endpointURL, user, password) {
   x <- ifelse(grepl("[?]", endpointURL), "&$count=true", "?$count=true")
   endpointURL <- paste(endpointURL, x, sep = "")
   # print(endpointURL)
-  req <- request(endpointURL) |> req_auth_basic(user, pw)
-  resp <- req_perform(req)
+  req <- httr2::request(endpointURL) |> httr2::req_auth_basic(user, password)
+  resp <- httr2::req_perform(req)
   respJSON <- resp |> httr2::resp_body_json()
   count <- respJSON$`@odata.count`
   # print(count)
