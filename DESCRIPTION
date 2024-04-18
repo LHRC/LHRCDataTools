@@ -16,7 +16,7 @@ Imports:
     stringr,
     tidyjson,
     tidyverse,
-    RPostgresql,
+    RPostgreSQL,
     RPostgres,
     DBI,
     janitor
