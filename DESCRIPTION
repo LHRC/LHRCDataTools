@@ -15,4 +15,8 @@ Imports:
     magrittr,
     stringr,
     tidyjson,
-    tidyverse
+    tidyverse,
+    RPostgresql,
+    RPostgres,
+    DBI,
+    janitor
