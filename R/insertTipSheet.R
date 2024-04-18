@@ -1,4 +1,4 @@
 #' @export
 insertTipSheet <- function(){
-
+ TRUE
 }
