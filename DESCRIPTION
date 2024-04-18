@@ -19,5 +19,6 @@ Imports:
     RPostgreSQL,
     RPostgres,
     DBI,
-    janitor
+    janitor,
+    dplyr
     
